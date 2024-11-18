@@ -15,7 +15,7 @@ const { requiresAuth } = auth0
 // dynamic user context and personalization on the frontend. 
 api.get('/user', (req, res) => {  
   // First, make sure the user is logged in     
-  if ( req.oidc.isAuthenticated() ){
+  if ( req.oidc?.isAuthenticated() ){
     // NOTE: "req.oidc.user" is the variable where Auth0 stores user data
     res.send({
       ...req.oidc.user,
