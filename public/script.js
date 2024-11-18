@@ -39,13 +39,9 @@ userWelcome()
 const displayVault = async () =>{ 
     // the vault endpoint is protected so it will only work for logged in users. 
     // See also:  ../api.js  uses the requiresAuth middleware to achieve this. 
-    try{
-        console.log('ok')
-        const response = await fetch('/api/vault')
-        
-        console.log(response)
-        const data = await response.json()
-        console.log(data)
+    try{ 
+        const response = await fetch('/api/vault') 
+        const data = await response.json() 
         const listItems = data.map(item => template(item)).join('') 
         const ul = document.createElement('ul') 
         ul.innerHTML = DOMPurify.sanitize(listItems)

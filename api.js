@@ -44,6 +44,10 @@ api.get('/vault',  requiresAuth(), async (req, res) => {
   } 
 })
 
+
+// other endpoints 
+
+
   
 export { api as apiEndpoints}; 
  
