@@ -18,7 +18,7 @@ if (process.env.VERCEL) {
 // Import the OpenID Connect Library (maintained by Auth0)
 // See also: https://github.com/auth0/express-openid-connect
 import auth0 from 'express-openid-connect'
-const { auth } = auth0
+const { auth, requiresAuth } = auth0
 
 // Auth0 Configuration
 // Make sure add the following environment variables are set:
@@ -64,8 +64,13 @@ app.get('/api/user', (req, res) => {
     }
 })
 
+// the private vault page
+app.get('/vault', requiresAuth(), (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'private', 'vault.html'));
+});
 
-app.get('/api/vault', async (req, res) => {
+
+app.get('/api/secrets', async (req, res) => {
     try {
         // If the user is logged in, send secret data
         if (req.oidc?.isAuthenticated()) {
