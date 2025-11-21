@@ -2,7 +2,10 @@
 import express from "express";
 const app = express();
 
-if (process.env.VERCEL === "1") {
+import path from 'path';
+const dirPath = path.join(process.cwd(), '/public/index.html')
+
+if (process.env.VERCEL) {
     // on Vercel, public files are served automatically 
     // but we still need to define index.html as root
     app.get('/', (req, res) => {
@@ -15,16 +18,23 @@ else {
     app.use(express.static('public'))
 }
 
+process.cwd()
 
-
-
-app.get('/dirname', (req, res) => {
+app.get('/cwd', (req, res) => {
     res.send({
-        meta: import.meta.url,
-        filename: __filename,
-        dirname: __dirname
+        cwd: process.cwd(),
+        dirPath: dirPath
     });
 })
+
+
+// app.get('/dirname', (req, res) => {
+//     res.send({
+//         meta: import.meta.url,
+//         filename: __filename,
+//         dirname: __dirname
+//     });
+// })
 
 
 // Import the OpenID Connect Library (maintained by Auth0)
