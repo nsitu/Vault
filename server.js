@@ -1,90 +1,61 @@
 // import Express library and activate it
 import express from "express";
-import path from 'path';
 const app = express();
 
+// import path module to help with file paths
+import path from 'path';
 
+// Serve static files from the 'public' folder
+app.use(express.static('public'))
 
+// On Vercel, point the root url (/) to index.html explicitly
 if (process.env.VERCEL) {
-    // Vercel publishes the '/public' folder automatically
-    // but we still need to point the root '/' to index.html 
     app.get('/', (req, res) => {
-        res.sendFile(path.join(process.cwd(), '/public/index.html'))
+        res.sendFile(path.join(process.cwd(), 'public', 'index.html'))
     })
 }
-else {
-    // When running locally, use express 
-    // to serve static files from /public folder
-    app.use(express.static('public'))
-}
-
-process.cwd()
-
-app.get('/cwd', (req, res) => {
-    res.send({
-        cwd: process.cwd(),
-        dirPath: dirPath
-    });
-})
-
-
-// app.get('/dirname', (req, res) => {
-//     res.send({
-//         meta: import.meta.url,
-//         filename: __filename,
-//         dirname: __dirname
-//     });
-// })
-
 
 // Import the OpenID Connect Library (maintained by Auth0)
 // See also: https://github.com/auth0/express-openid-connect
 import auth0 from 'express-openid-connect'
-const { auth, requiresAuth } = auth0
+const { auth } = auth0
 
-/** 
- * Auth0 Configuration
- * NOTE: the settings below assume the use of environment variables.
- * Therefore you must add the following variables to your .env file:
- * BASE_URL, SECRET, CLIENT_ID, ISSUER_BASE_URL
- */
-const lookFor = ['SECRET', 'BASE_URL', 'CLIENT_ID', 'ISSUER_BASE_URL']
-const missing = lookFor.filter(name => !process.env[name])
-if (missing.length > 0) {
-    console.error(`Please add Environment Variables to .env: ${missing.join(', ')}, see also: https://auth0.com/docs/quickstart/webapp/express/interactive`)
-}
-else {
-    const config = {
-        authRequired: false,
-        auth0Logout: true,
-        secret: process.env.SECRET,
-        baseURL: process.env.BASE_URL,
-        clientID: process.env.CLIENT_ID,
-        issuerBaseURL: process.env.ISSUER_BASE_URL
-    }
-    // Tell our Express app to use auth0
-    // NOTE: this will add  routes for  /login, /logout, /callback  etc.
-    app.use(auth(config))
+// Auth0 Configuration
+// Make sure add the following environment variables are set:
+// SECRET, BASE_URL, CLIENT_ID, ISSUER_BASE_URL 
+const config = {
+    authRequired: false,
+    auth0Logout: true,
+    secret: process.env.SECRET,
+    baseURL: process.env.BASE_URL,
+    clientID: process.env.CLIENT_ID,
+    issuerBaseURL: process.env.ISSUER_BASE_URL
 }
 
-app.get('/profile', requiresAuth(), (req, res) => {
-    res.send({ ...req.oidc.user });
-});
+// Show an error if any environment variables are missing
+if (Object.keys(config).some(key => config[key] == null)) {
+    console.error('Error: Auth0 environment variable(s) are missing.')
+    process.exit(1)
+}
 
-// Auth0 attatches user data to each incoming request
-// Let's publish this user data to allow for more
-// dynamic user context and personalization on the frontend. 
+// Enable auth in our Express app.
+// This will automatically setup /login, /logout, /callback endpoints
+app.use(auth(config))
+
+// NOTE: OpenIdConnect attaches user data to all incoming requests
+// We can find this data at "req.oidc"
+
+// Publish the user's data and authentication state to the frontend
 app.get('/api/user', (req, res) => {
-    // First, make sure the user is logged in     
+    // If the user is logged in, send their data 
     if (req.oidc?.isAuthenticated()) {
-        // NOTE: "req.oidc.user" is the variable where Auth0 stores user data
         res.send({
             ...req.oidc.user,
             isAuthenticated: true
         })
     }
     // If the user is not logged in, 
-    // Let's inform the frontend that we have a Guest user.
+    // Inform the frontend that we have a Guest user.
     else {
         res.send({
             name: "Guest",
@@ -93,9 +64,10 @@ app.get('/api/user', (req, res) => {
     }
 })
 
-// This is a secure endpoint. Login is required to access it.
+
 app.get('/api/vault', async (req, res) => {
     try {
+        // If the user is logged in, send secret data
         if (req.oidc?.isAuthenticated()) {
             res.send([
                 {
@@ -112,6 +84,8 @@ app.get('/api/vault', async (req, res) => {
                 }
             ]);
         }
+        // If the user is not logged in,
+        // return an error message
         else {
             return res.status(401).json({ error: 'Authentication required' });
 

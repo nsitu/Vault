@@ -31,4 +31,4 @@ When deploying to Vercel:
 -Allowed Logout URLs: `http://localhost:3000,https://my-project.vercel.app`
 
 ## Note
-This is a demonstration only. Protecting your routes will not prevent people from viewing otherwise public source code.  
+If you're publishing templates via Express, you can also use the [requiresAuth](https://auth0.github.io/express-openid-connect/functions/requiresAuth.html) middleware that ships with Express OpenID Connect. This would allow you to automatically redirect users to a login page when they attempt to reach a secured page.
