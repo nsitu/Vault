@@ -1,15 +1,15 @@
 // import Express library and activate it
 import express from "express";
+import path from 'path';
 const app = express();
 
-import path from 'path';
-const dirPath = path.join(process.cwd(), '/public/index.html')
+
 
 if (process.env.VERCEL) {
-    // on Vercel, public files are served automatically 
-    // but we still need to define index.html as root
+    // Vercel publishes the '/public' folder automatically
+    // but we still need to point the root '/' to index.html 
     app.get('/', (req, res) => {
-        res.sendFile('/var/task/public/index.html')
+        res.sendFile(path.join(process.cwd(), '/public/index.html'))
     })
 }
 else {
