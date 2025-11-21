@@ -17,14 +17,10 @@ The Auth0 quickstart includes an `Integrate the SDK` section. This is useful as 
 Here's an example `.env` file showing the environment variables that are needed. You'll find something similar in the `.env.example` file included with in this repo.  *You will need to modify them* to fit your own Auth0 account details.  
 
 ```
-# The URL where the application is served 
-BASE_URL=http://localhost:3000
-# A long, random string
-SECRET=*****
-# The Client ID found in your Application settings
-CLIENT_ID=*****
-# The Domain as a secure URL found in your Application settings
-ISSUER_BASE_URL=https://*****.auth0.com
+BASE_URL=http://localhost:3000          # URL where the application is served 
+SECRET=*****                            # A long, random string
+CLIENT_ID=*****                         # Client ID found in your Application settings
+ISSUER_BASE_URL=https://*****.auth0.com # Auth0 secure URL found in your Application settings
 ```
 
 ## Deploying to Vercel
