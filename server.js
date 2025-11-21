@@ -2,9 +2,30 @@
 import express from "express";
 const app = express();
 
-// Serve static files from /public folder 
-// NOTE: This is most useful locally, as Vercel will publish '/public' folder automatically
+// Serve static files from /public folder (useful when running Node locally, optional on Vercel).
 app.use(express.static('public'))
+// Define index.html as the root explicitly (useful on Vercel, optional when running Node locally).
+
+
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'))
+})
+
+
+app.get('/dirname', (req, res) => {
+    res.send({
+        meta: import.meta.url,
+        filename: __filename,
+        dirname: __dirname
+    });
+})
+
 
 // Import the OpenID Connect Library (maintained by Auth0)
 // See also: https://github.com/auth0/express-openid-connect

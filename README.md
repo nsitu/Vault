@@ -1,5 +1,5 @@
 # Vault  
-This is an example of an [Express](https://expressjs.com) app that uses [Auth0](https://auth0.com/) for User authentication. It displays a public landing page, but also shares secret data via a `/vault` endpoint. This makes use of `isAuthenticated` logic to ensure the user is logged in before sending the secret data.
+This is an example of an [Express](https://expressjs.com) app that uses [Auth0](https://auth0.com/) for User authentication. It displays a public landing page, but also shares secret data via an `/api/vault` endpoint. This makes use of `isAuthenticated` logic to ensure the user is logged in before sending the secret data.
 
 ## Setup Auth0
 To use this code, create your own [Auth0](https://auth0.com/) account.
